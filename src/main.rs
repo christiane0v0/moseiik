@@ -442,6 +442,13 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+	
+	#[test]
+    fn test_prepare_target() {
+        let target = prepare_target("assets/test/edg_skin", 128, 128);
+        assert_eq!(target.width(), 128);
+        assert_eq!(target.height(), 128);
+	
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
