@@ -442,10 +442,48 @@ fn main() {
 mod tests {
 	
 	#[test]
-    fn test_prepare_target() {
-        let target = prepare_target("assets/test/edg_skin", 128, 128);
-        assert_eq!(target.width(), 128);
-        assert_eq!(target.height(), 128);
+    fn test_prepare_target_valid_input() {
+        // 
+        let test_image_path = "assets/kit.jpeg"; 
+        let scale = 1/120;
+        let tile_size = Size { width: 1920, height: 1080 };
+
+        let result = prepare_target(test_image_path, scale, &tile_size);
+
+        match result {
+            Ok(t) => {
+                // 
+                assert_eq!(t.width(), 16);  // 
+                assert_eq!(t.height(), 9); // 
+                println!("test_prepare_target_valid_input: valide");
+            }
+            Err(_) => {
+                panic!("test_prepare_target_valid_input: invalide");
+            }
+        }
+    }
+
+    #[test]
+    fn test_prepare_target_invalid_input() {
+        // 
+        let test_image_path = "assets/test.jpeg"; // 
+        let scale = 2;
+        let tile_size = Size { width: 32, height: 32 };
+
+        let result = prepare_target(test_image_path, scale, &tile_size);
+
+        match result {
+            Ok(_) => {
+                panic!("test_prepare_target_invalid_input: invalide");
+            }
+            Err(e) => {
+                println!(
+                    "test_prepare_target_invalid_input: valide, error: {}",
+                    e
+                );
+            }
+        }
+    }
 	
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
