@@ -440,21 +440,22 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+	use super::*;
 	
-	#[test]
+		#[test]
     fn test_prepare_target_valid_input() {
         // 
-        let test_image_path = "assets/kit.jpeg"; 
-        let scale = 1/120;
-        let tile_size = Size { width: 1920, height: 1080 };
+        let test_image_path = "assets/target-small.png"; 
+        let scale = 3;
+        let tile_size = Size { width: 5, height: 5 };
 
         let result = prepare_target(test_image_path, scale, &tile_size);
 
         match result {
             Ok(t) => {
                 // 
-                assert_eq!(t.width(), 16);  // 
-                assert_eq!(t.height(), 9); // 
+                assert_eq!(t.width(), 30);  // width=2*scale*tile_size.width
+                assert_eq!(t.height(), 30); //  height=2*scale*tile_size.height
                 println!("test_prepare_target_valid_input: valide");
             }
             Err(_) => {
@@ -463,7 +464,8 @@ mod tests {
         }
     }
 
-    #[test]
+	 #[test]
+    //path n'existe pas
     fn test_prepare_target_invalid_input() {
         // 
         let test_image_path = "assets/test.jpeg"; // 
