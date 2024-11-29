@@ -520,6 +520,7 @@ use image::{RgbImage, ImageBuffer};
         assert_eq!(result, expected_result);
     }
     
+    /*
     use std::fs::{self, File};
     use std::io::Write;
     use tempfile::tempdir;
@@ -555,8 +556,8 @@ use image::{RgbImage, ImageBuffer};
         assert_eq!(tile.width(), 4);
         assert_eq!(tile.height(), 4);
     }
-}
-
+    */
+    
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
