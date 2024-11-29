@@ -520,7 +520,43 @@ use image::{RgbImage, ImageBuffer};
         assert_eq!(result, expected_result);
     }
     
+    use std::fs::{self, File};
+    use std::io::Write;
+    use tempfile::tempdir;
+
+    #[test]
+    fn test_prepare_tiles() {
     
+    // create repertoire temporelly and 3 test images
+        let temp_dir = tempdir().unwrap();
+        let dir_path = temp_dir.path();
+        
+    // create 3 test images of size 32*32
+    for i in 0..3 {
+        let image_path = dir_path.join(format!("test_image_{}.png", i));
+        let mut img = ImageBuffer::new(32, 32); 
+        for (x, y, pixel) in img.enumerate_pixels_mut() {
+            *pixel = image::Rgb([(x + y) as u8, 0, 0]);
+        }
+        img.save(&image_path).unwrap();
+    }
+    
+        let tile_size = Size { width:4, height: 4};
+        let verbose = false;
+        let result = prepare_tiles(dir_path.to_str().unwrap(), &tile_size, verbose);
+        
+    //test if 3 image have been returned 
+    assert!(result.is_ok());
+    let tiles = result.unwrap();
+    assert_eq!(tiles.len(), 3);
+    
+    //test tile size
+    for tile in tiles {
+        assert_eq!(tile.width(), 4);
+        assert_eq!(tile.height(), 4);
+    }
+}
+
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
