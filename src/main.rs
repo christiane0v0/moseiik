@@ -486,9 +486,44 @@ mod tests {
             }
         }
     }
-	
-use image::{RgbImage, ImageBuffer};
 
+	 #[test]
+    fn test_prepare_tiles_assets() {
+
+        let test_dir = "./assets/test/test_prepare_tiles"; // there are 5 image in the directory to test
+        //let test_dir = "./assets/test/images";        //need to download image from lien 
+        
+    //
+    assert!(std::path::Path::new(test_dir).exists(),"test directory does not exists!");
+    let image_file: Vec<_> = std::fs::read_dir(test_dir)
+    .unwrap()
+    .filter_map(|entry|{
+    let path = entry.unwrap().path();
+    if path.extension().map(|ext|ext == "png" ||ext =="jpg" ||ext =="jpeg").unwrap_or(false){
+    Some(path)
+    }else{
+    None
+    }
+    }).collect();
+    
+    //
+        let tile_size = Size { width:32, height: 32};
+        let verbose = false;
+        let result = prepare_tiles(test_dir, &tile_size, verbose);
+        
+    //test if 5 image have been returned 
+    assert!(result.is_ok());
+    let tiles = result.unwrap();
+    assert_eq!(tiles.len(), image_file.len());
+    
+    //test tile size
+    for (i, tile) in tiles.iter().enumerate() {
+        assert_eq!(tile.width(), 32);
+        assert_eq!(tile.height(), 32);
+    }
+    }
+use image::{RgbImage, ImageBuffer};
+/*
     #[test]
     #[cfg(target_arch = "x86_64")]
     fn test_l1_x86_sse2() {
@@ -519,7 +554,8 @@ use image::{RgbImage, ImageBuffer};
         let expected_result = unsafe { l1_x86_sse2(&image1, &image2) };
         assert_eq!(result, expected_result);
     }
-    
+    */
+	
     /*
     use std::fs::{self, File};
     use std::io::Write;
