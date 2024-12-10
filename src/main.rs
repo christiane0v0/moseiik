@@ -493,40 +493,41 @@ mod tests {
         let test_dir = "./assets/test/test_prepare_tiles"; // there are 5 image in the directory to test
         //let test_dir = "./assets/test/images";        //need to download image from lien 
         
-    //
-    assert!(std::path::Path::new(test_dir).exists(),"test directory does not exists!");
-    let image_file: Vec<_> = std::fs::read_dir(test_dir)
-    .unwrap()
-    .filter_map(|entry|{
-    let path = entry.unwrap().path();
-    if path.extension().map(|ext|ext == "png" ||ext =="jpg" ||ext =="jpeg").unwrap_or(false){
-    Some(path)
-    }else{
-    None
-    }
-    }).collect();
-    
-    //
-        let tile_size = Size { width:32, height: 32};
-        let verbose = false;
-        let result = prepare_tiles(test_dir, &tile_size, verbose);
+        //
+        assert!(std::path::Path::new(test_dir).exists(),"test directory does not exists!");
+        let image_file: Vec<_> = std::fs::read_dir(test_dir)
+        .unwrap()
+        .filter_map(|entry|{
+        let path = entry.unwrap().path();
+        if path.extension().map(|ext|ext == "png" ||ext =="jpg" ||ext =="jpeg").unwrap_or(false){
+        Some(path)
+        }else{
+        None
+        }
+        }).collect();
         
-    //test if 5 image have been returned 
-    assert!(result.is_ok());
-    let tiles = result.unwrap();
-    assert_eq!(tiles.len(), image_file.len());
+        //
+            let tile_size = Size { width:32, height: 32};
+            let verbose = false;
+            let result = prepare_tiles(test_dir, &tile_size, verbose);
+            
+        //test if 5 image have been returned 
+        assert!(result.is_ok());
+        let tiles = result.unwrap();
+        assert_eq!(tiles.len(), image_file.len());
+        
+        //test tile size
+        for (i, tile) in tiles.iter().enumerate() {
+            assert_eq!(tile.width(), 32);
+            assert_eq!(tile.height(), 32);
+        }
+    }
     
-    //test tile size
-    for (i, tile) in tiles.iter().enumerate() {
-        assert_eq!(tile.width(), 32);
-        assert_eq!(tile.height(), 32);
-    }
-    }
-use image::{RgbImage, ImageBuffer};
-/*
+use image::{RgbImage, ImageBuffer, Rgb};
     #[test]
-    #[cfg(target_arch = "x86_64")]
-    fn test_l1_x86_sse2() {
+    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+    fn unit_test_x86() {
+
         // create 2 same 4*4-pixels images
         let width = 4;
         let height = 4;
@@ -543,74 +544,43 @@ use image::{RgbImage, ImageBuffer};
             let block1 = &im1[i..i + stride];
             let block2 = &im2[i..i + stride];
 
-        for (p1, p2) in block1.iter().zip(block2.iter()) {
+            for (p1, p2) in block1.iter().zip(block2.iter()) {
                 result += i32::abs((*p1 as i32) - (*p2 as i32));
             }
         }
+        
         let remainder = nb_sub_pixel % stride;
+        
         for i in nb_sub_pixel - remainder..nb_sub_pixel {
             result += i32::abs((im1[i] as i32) - (im2[i] as i32));
         }
+        
         let expected_result = unsafe { l1_x86_sse2(&image1, &image2) };
+        
         assert_eq!(result, expected_result);
-    }
-    */
-	
-    /*
-    use std::fs::{self, File};
-    use std::io::Write;
-    use tempfile::tempdir;
-
-    #[test]
-    fn test_prepare_tiles() {
-    
-    // create repertoire temporelly and 3 test images
-        let temp_dir = tempdir().unwrap();
-        let dir_path = temp_dir.path();
-        
-    // create 3 test images of size 32*32
-    for i in 0..3 {
-        let image_path = dir_path.join(format!("test_image_{}.png", i));
-        let mut img = ImageBuffer::new(32, 32); 
-        for (x, y, pixel) in img.enumerate_pixels_mut() {
-            *pixel = image::Rgb([(x + y) as u8, 0, 0]);
-        }
-        img.save(&image_path).unwrap();
-    }
-    
-        let tile_size = Size { width:4, height: 4};
-        let verbose = false;
-        let result = prepare_tiles(dir_path.to_str().unwrap(), &tile_size, verbose);
-        
-    //test if 3 image have been returned 
-    assert!(result.is_ok());
-    let tiles = result.unwrap();
-    assert_eq!(tiles.len(), 3);
-    
-    //test tile size
-    for tile in tiles {
-        assert_eq!(tile.width(), 4);
-        assert_eq!(tile.height(), 4);
-    }
-    */
-    
-    #[test]
-    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-    fn unit_test_x86() {
-        // TODO
-        assert!(true);
     }
 
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn unit_test_aarch64() {
-        assert!(true);
+        let im1 = RgbImage::from_pixel(2, 2, Rgb([100, 150, 200]));
+        let im2 = RgbImage::from_pixel(2, 2, Rgb([50, 100, 150]));
+        
+        let result = l1_neon(&im1, &im2);
+        let expected = (50 + 50 + 50) * 16; // Difference per pixel * number of pixels
+        
+        assert_eq!(result, expected);
     }
 
     #[test]
     fn unit_test_generic() {
-        // TODO
-        assert!(true);
+        let im1 = RgbImage::from_pixel(2, 2, Rgb([100, 150, 200]));
+        let im2 = RgbImage::from_pixel(2, 2, Rgb([50, 100, 150]));
+        
+        let result = l1_generic(&im1, &im2);
+        let expected = (50 + 50 + 50) * 4; // Difference per pixel * number of pixels
+        
+        assert_eq!(result, expected);
     }
     
 }
