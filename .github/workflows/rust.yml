@@ -13,7 +13,15 @@ jobs:
       steps:
   
         - name: Check out code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v4 
+          
+        - name: Download assets/images
+          run: |
+            echo "Downloading assets/images..."
+            mkdir -p assets/images
+            wget -q -P assets/images https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip
+            unzip -q assets/images/images.zip -d assets/images
+            echo "Assets downloaded."
     
         - name: Build
           run: |
