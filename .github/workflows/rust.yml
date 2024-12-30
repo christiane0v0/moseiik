@@ -17,11 +17,11 @@ jobs:
           
         - name: Download assets/images
           run: |
-            echo "Downloading assets/images..."
-            mkdir -p assets/images
-            wget -q -P assets/images https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip
-            unzip -q assets/images/images.zip -d assets/images
-            echo "Assets downloaded."
+            echo "Downloading assets/images..." 
+            wget -q -O assets/moseiik_test_images.zip https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip
+            echo "Extracting test images..."
+            unzip -q assets/moseiik_test_images.zip -d assets/images
+            echo "Images extracted to assets/images."
     
         - name: Build
           run: |
