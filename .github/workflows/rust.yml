@@ -29,4 +29,11 @@ jobs:
       
         - name: Run tests
           run: |
-            docker run --rm rustmosaic:v1 cargo test --release
+            docker run --rm rustmosaic:v1 cargo test --release 
+            
+        - name: Clean up images
+          run: |
+            echo "Cleaning up assets/images..."
+            rm -rf assets/images
+            echo "Cleanup."
+          
