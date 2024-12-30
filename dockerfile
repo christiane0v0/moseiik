@@ -1,8 +1,9 @@
-# Start from Ubuntu base image
-FROM ubuntu:latest
+# Start from multi-architecture base image
+FROM --platform=$BUILDPLATFORM ubuntu:latest AS base
 
 # Set environment variables
-ENV QEMU_VERSION=v7.2.0-1
+ENV QEMU_VERSION=v7.2.0-1 
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install required packages (TO BE FILTERED LATER)
 RUN apt-get update && apt-get install -y \
@@ -38,4 +39,4 @@ WORKDIR /app
 
 # Run unit and integration tests (LAUNCHING TESTS AUTOMATICALLY)
 # NB: MUST HAVE IMAGES DB INCLUDED IN ORDER TO PASS INTEGRATION TESTS
-#CMD ["cargo", "test", "--release"]
+CMD ["cargo", "test", "--release 
