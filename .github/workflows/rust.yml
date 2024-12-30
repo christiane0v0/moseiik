@@ -2,9 +2,9 @@ name: Rust CI for Moseiik
 
 on:
   push:
-    branches: [ "update_dockerfile" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "update_dockerfile" ]
+    branches: [ "main" ]
 
 jobs:
   test:
