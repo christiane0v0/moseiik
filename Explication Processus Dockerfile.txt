@@ -1,0 +1,16 @@
+The dockerfile present in this repo uses a base image called neginx which is compatable with both architectures:
+x86_64 "amd64" and aarch64 "arm64".
+
+Therefore, the installation of qemu wasn't necessary for the docker image. However, we needed to install some dependencies and also stup Rust.
+
+In order to build and run the docker image on local machine for x86, we used the following lines:
+$ sudo docker build --platform linux/amd64 -t mosaiic .
+$ sudo docker run --platform linux/amd64 -it mosaiic
+
+In order to build and run the docker image on local machine for aarch64, we used the following lines:
+$ sudo docker build --platform linux/arm64 -t mosaiic_aarch64 .
+$ sudo docker run --platform linux/arm64 -it mosaiic_aarch64
+
+Images were first tested locally to get successful build, run and test pass before deploying in the CI chain.
+
+There is a possibility to use -rm option when to get rid of image after running it but we haven't used it for our trials on our local machines.
