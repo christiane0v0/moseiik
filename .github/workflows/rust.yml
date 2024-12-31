@@ -41,7 +41,11 @@ jobs:
         #    docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test --release -- 
         - name: Run tests
           run: |
-            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test  
+            if [ "${{ matrix.arch }}" = "arm64" ]; then
+            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} /bin/bash -c "apt-get update && apt-get install -y qemu-user && cargo test" 
+            else
+            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test 
+            fi
             
         #- name: Run
         #  run: |
