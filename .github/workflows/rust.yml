@@ -20,10 +20,13 @@ jobs:
         - name: Download assets/images
           run: |
             echo "Downloading assets/images..." 
-            wget -q -O assets/moseiik_test_images.zip https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip
+            wget https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip -P assets/
             echo "Extracting test images..."
-            unzip -q assets/moseiik_test_images.zip -d assets/images
+            unzip -n assets/moseiik_test_images.zip -d assets/
             echo "Images extracted to assets/images."
+#wget -q -O assets/moseiik_test_images.zip https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip
+#unzip -q assets/moseiik_test_images.zip -d assets/images
+
         # Adding the Qemu for simulating the aarch64
         - name: Setting up QEMU Emulator 
           uses: docker/setup-qemu-action@v2
