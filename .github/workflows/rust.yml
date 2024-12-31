@@ -1,9 +1,11 @@
-# Name of CI workflwo
+# Name of CI workflow
 name: Rust CI for Moseiik
+
 # Starting on a push event on main branch
 on:
   push:
     branches: [ "main" ]
+    
 # Job matricx for running on two archirtectures 
 jobs:
   build-and-test:
@@ -11,6 +13,7 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
+        
     # Definition of CI steps
     steps:
         # Do a checkout in main
@@ -24,38 +27,27 @@ jobs:
             echo "Extracting test images..."
             unzip -n assets/moseiik_test_images.zip -d assets/
             echo "Images extracted to assets/images."
-#wget -q -O assets/moseiik_test_images.zip https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip
-#unzip -q assets/moseiik_test_images.zip -d assets/images
 
         # Adding the Qemu for simulating the aarch64
         - name: Setting up QEMU Emulator 
           uses: docker/setup-qemu-action@v2
           with:
             platforms: all
+            
         # Building the docker image
         - name: Build Docker image
           run: |
             docker buildx create --use 
             docker buildx build --no-cache --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . --load
+            
         # Running the docker image and removing image after execution
         - name: Run tests
           run: |
             docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test
+            
         # Removing IETR database images from repo
         - name: Clean up images
           run: |
             echo "Cleaning up assets/images..."
             rm -rf assets/images 
 
-# Delete all generated docker images (optionsl)
-#- name: Cleanup Docker images
-#run: |
-#  docker rmi mosaiic:${{ matrix.arch }}
-
-#- name: Build
-        #  run: |
-        #    docker build --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . 
-
-#- name: Run
-#  run: |
-#    docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} -it mosaiic
