@@ -560,16 +560,39 @@ use image::{RgbImage, ImageBuffer, Rgb};
         assert_eq!(result, expected_result);
     }
 
-    #[test]
+     #[test]
     #[cfg(target_arch = "aarch64")]
     fn unit_test_aarch64() {
-        let im1 = RgbImage::from_pixel(2, 2, Rgb([100, 150, 200]));
-        let im2 = RgbImage::from_pixel(2, 2, Rgb([50, 100, 150]));
+        // create 2 same 4*4-pixels images
+        let width = 4;
+        let height = 4;
+        let image1: RgbImage = ImageBuffer::from_pixel(width, height, image::Rgb([100, 100, 100]));
+        let image2: RgbImage = ImageBuffer::from_pixel(width, height, image::Rgb([105, 95, 110]));
+        // calcule distance l1 between image1 et image 2
+        let im1 = image1.as_raw();
+        let im2 = image2.as_raw();
+        let stride = 16; // 16 bytes-aligned for 128 bits
+        let nb_sub_pixel = im1.len();
+        let mut result: i32 = 0;
+
+        for i in (0..nb_sub_pixel - stride).step_by(stride) {
+            let block1 = &im1[i..i + stride];
+            let block2 = &im2[i..i + stride];
+
+            for (p1, p2) in block1.iter().zip(block2.iter()) {
+                result += i32::abs((*p1 as i32) - (*p2 as i32));
+            }
+        }
         
-        let result = l1_neon(&im1, &im2);
-        let expected = (50 + 50 + 50) * 16; // Difference per pixel * number of pixels
+        let remainder = nb_sub_pixel % stride;
         
-        assert_eq!(result, expected);
+        for i in nb_sub_pixel - remainder..nb_sub_pixel {
+            result += i32::abs((im1[i] as i32) - (im2[i] as i32));
+        }
+        
+        let expected_result = unsafe { l1_neon(&image1, &image2) };
+        
+        assert_eq!(result, expected_result);
     }
 
     #[test]
