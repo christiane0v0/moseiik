@@ -26,12 +26,18 @@ jobs:
             unzip -q assets/moseiik_test_images.zip -d assets/images
             echo "Images extracted to assets/images."
     
-        - name: Build
+        #- name: Build
+        #  run: |
+        #    docker build --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . 
+        
+        - name: Build Docker image
           run: |
-            docker build --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} .
+            docker buildx create --use 
+            docker buildx build --no-cache --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . --load
+
       
         - name: Run tests
-          run: |
+          run: | 
             docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test --release --
             
         - name: Clean up images
