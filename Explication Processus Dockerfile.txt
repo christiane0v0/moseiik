@@ -13,4 +13,7 @@ $ sudo docker run --platform linux/arm64 -it mosaiic_aarch64
 
 Images were first tested locally to get successful build, run and test pass before deploying in the CI chain.
 
-There is a possibility to use -rm option when to get rid of image after running it but we haven't used it for our trials on our local machines.
+There is a possibility to use -rm option when to get rid of image after running it but we haven't used it for our trials on our local machines. 
+
+Execution of the workflow on GitHub Actions may spend a estimated time of 30 minutes for Run tests on arm64: 
+The generated Docker containers run the unit and integration tests.
