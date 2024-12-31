@@ -442,7 +442,7 @@ fn main() {
 mod tests {
 	use super::*;
 	
-		#[test]
+	#[test]
     fn test_prepare_target_valid_input() {
     
         let test_image_path = "assets/target-small.png"; 
@@ -493,7 +493,6 @@ mod tests {
         let test_dir = "./assets/test/test_prepare_tiles"; // there are 5 image in the directory to test
         //let test_dir = "./assets/test/images";        //need to download image from lien 
         
-        //
         assert!(std::path::Path::new(test_dir).exists(),"test directory does not exists!");
         let image_file: Vec<_> = std::fs::read_dir(test_dir)
         .unwrap()
@@ -505,8 +504,7 @@ mod tests {
         None
         }
         }).collect();
-        
-        //
+
             let tile_size = Size { width:32, height: 32};
             let verbose = false;
             let result = prepare_tiles(test_dir, &tile_size, verbose);
