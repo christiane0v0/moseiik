@@ -43,9 +43,9 @@ jobs:
           run: |
             docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test  
             
-        - name: Run
-          run: |
-            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} -it mosaiic
+        #- name: Run
+        #  run: |
+        #    docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} -it mosaiic
             
         - name: Clean up images
           run: |
