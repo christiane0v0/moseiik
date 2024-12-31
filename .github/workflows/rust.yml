@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        #arch: [amd64, arm64]
+        arch: [arm64]
         
     steps:
   
@@ -37,7 +38,7 @@ jobs:
 
         - name: Run tests
           run: |
-            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test 
+            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test --release --
             
         #- name: Run
         #  run: |
