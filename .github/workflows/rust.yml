@@ -37,8 +37,7 @@ jobs:
         # Running the docker image and removing image after execution
         - name: Run tests
           run: |
-            docker run --rm --platform linux/${{ matrix.arch }} -it mosaiic:${{ matrix.arch }} 
-# cargo test
+            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test
         # Removing IETR database images from repo
         - name: Clean up images
           run: |
