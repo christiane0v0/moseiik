@@ -1,24 +1,22 @@
+# Name of CI workflwo
 name: Rust CI for Moseiik
-
+# Starting on a push event on main branch
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+# Job matricx for running on two archirtectures 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        #arch: [amd64, arm64]
-        arch: [arm64]
-        
+        arch: [amd64, arm64]
+    # Definition of CI steps
     steps:
-  
+        # Do a checkout in main
         - name: Check out code
           uses: actions/checkout@v4 
-          
+        # Download IETR images database necessary fr intergation tests
         - name: Download assets/images
           run: |
             echo "Downloading assets/images..." 
@@ -26,30 +24,36 @@ jobs:
             echo "Extracting test images..."
             unzip -q assets/moseiik_test_images.zip -d assets/images
             echo "Images extracted to assets/images."
-    
-        #- name: Build
-        #  run: |
-        #    docker build --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . 
-        
+        # Adding the Qemu for simulating the aarch64
+        - name: Setting up QEMU Emulator 
+          uses: docker/setup-qemu-action@v2
+          with:
+            platforms: all
+        # Building the docker image
         - name: Build Docker image
           run: |
             docker buildx create --use 
             docker buildx build --no-cache --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . --load
-
+        # Running the docker image and removing image after execution
         - name: Run tests
           run: |
-            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test --release --
-            
-        #- name: Run
-        #  run: |
-        #    docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} -it mosaiic
-            
+            docker run --rm --platform linux/${{ matrix.arch }} -it mosaiic:${{ matrix.arch }} 
+# cargo test
+        # Removing IETR database images from repo
         - name: Clean up images
           run: |
             echo "Cleaning up assets/images..."
             rm -rf assets/images 
 
-        - name: Cleanup Docker images
-          run: |
-            docker rmi mosaiic:${{ matrix.arch }}
-          
+# Delete all generated docker images (optionsl)
+#- name: Cleanup Docker images
+#run: |
+#  docker rmi mosaiic:${{ matrix.arch }}
+
+#- name: Build
+        #  run: |
+        #    docker build --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . 
+
+#- name: Run
+#  run: |
+#    docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} -it mosaiic
