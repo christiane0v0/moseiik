@@ -35,14 +35,9 @@ jobs:
             docker buildx create --use 
             docker buildx build --no-cache --platform linux/${{ matrix.arch }} -t mosaiic:${{ matrix.arch }} . --load
 
-      
-        #- name: Run tests
-        #  run: | 
-        #    docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test
-        
         - name: Run tests
           run: |
-            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test --release -- 
+            docker run --rm --platform linux/${{ matrix.arch }} mosaiic:${{ matrix.arch }} cargo test 
             
         #- name: Run
         #  run: |
